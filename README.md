@@ -78,7 +78,6 @@ The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-da
 - 'astype(int)' : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
 
 '''
-   #Informasi dataset ratings
    print("Info DataFrame Ratings")
    ratings_df.info()
    print("5 Baris Pertama DataFrame Ratings")
@@ -90,19 +89,13 @@ The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-da
 '''
 
 '''
-   #Informasi Dataset Movies
    print("Info DataFrame Movies")
-
-   #--- Perbaikan untuk masalah DtypeWarning dan AttributeError pada kolom 'id' ---
-   #Coba konversi kolom 'id' ke numerik. Gunakan errors='coerce' untuk mengubah nilai non-numerik menjadi NaN.
+   
    movies_df['id'] = pd.to_numeric(movies_df['id'], errors='coerce')
 
-   #Hapus baris yang memiliki nilai NaN di kolom 'id' (ini adalah baris yang tidak   bisa dikonversi ke numerik)
    movies_df = movies_df.dropna(subset=['id'])
 
-   #Sekarang, konversi ke integer (setelah membersihkan NaN)
    movies_df['id'] = movies_df['id'].astype(int)
-   #--- Akhir perbaikan kolom 'id' ---
 
    movies_df.info()
    print("5 Baris Pertama DataFrame Movies")
