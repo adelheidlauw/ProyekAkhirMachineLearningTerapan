@@ -77,32 +77,39 @@ The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-da
 - 'dropna()' : Menghapus semua baris yang mempunya nilai NaN di kolom terpilih.
 - 'astype(int)' : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
 
-'''
-   print("Info DataFrame Ratings")
-   ratings_df.info()
-   print("5 Baris Pertama DataFrame Ratings")
-   print(ratings_df.head())
-   print("Statistik Deskriptif DataFrame Ratings")
-   print(ratings_df.describe())
-   print("Jumlah Nilai Hilang DataFrame Ratings")
-   print(ratings_df.isnull().sum())
-'''
+```
+# Informasi dataset ratings
+print("Info DataFrame Ratings")
+ratings_df.info()
+print("5 Baris Pertama DataFrame Ratings")
+print(ratings_df.head())
+print("Statistik Deskriptif DataFrame Ratings")
+print(ratings_df.describe())
+print("Jumlah Nilai Hilang DataFrame Ratings")
+print(ratings_df.isnull().sum())
+```
 
-'''
-   print("Info DataFrame Movies")
-   
-   movies_df['id'] = pd.to_numeric(movies_df['id'], errors='coerce')
+```
+# Informasi Dataset Movies
+print("Info DataFrame Movies")
 
-   movies_df = movies_df.dropna(subset=['id'])
+# --- Perbaikan untuk masalah DtypeWarning dan AttributeError pada kolom 'id' ---
+# Coba konversi kolom 'id' ke numerik. Gunakan errors='coerce' untuk mengubah nilai non-numerik menjadi NaN.
+movies_df['id'] = pd.to_numeric(movies_df['id'], errors='coerce')
 
-   movies_df['id'] = movies_df['id'].astype(int)
+# Hapus baris yang memiliki nilai NaN di kolom 'id' (ini adalah baris yang tidak bisa dikonversi ke numerik)
+movies_df = movies_df.dropna(subset=['id'])
 
-   movies_df.info()
-   print("5 Baris Pertama DataFrame Movies")
-   print(movies_df.head())
-   print("Jumlah Nilai Hilang DataFrame Movies")
-   print(movies_df.isnull().sum())
-'''
+# Sekarang, konversi ke integer (setelah membersihkan NaN)
+movies_df['id'] = movies_df['id'].astype(int)
+# --- Akhir perbaikan kolom 'id' ---
+
+movies_df.info()
+print("5 Baris Pertama DataFrame Movies")
+print(movies_df.head())
+print("Jumlah Nilai Hilang DataFrame Movies")
+print(movies_df.isnull().sum())
+```
 
 ## Data Preprocessing
 Tujuan pra-pemrosesan adalah untuk membersihkan dan menyiapkan data agar sesuai untuk model sistem rekomendasi. Untuk Item-Based Collaborative Filtering, kita perlu membuat matriks pengguna-item (User-Item Matrix) di mana barisnya adalah pengguna, kolomnya adalah item, dan nilai di selnya adalah rating.
@@ -115,7 +122,7 @@ Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dil
 4. Membuat matriks pivot (User-Item Matrix).
 5. Menangani nilai NaN di matriks pivot (mengganti dengan 0).
 
-'''
+```
 # Standardisasi Judul Film: Tambahkan tahun rilis ke judul untuk mengatasi duplikasi nama film.
 # Pertama, ekstrak tahun dari 'release_date'
 movies_df['year'] = pd.to_datetime(movies_df['release_date'], errors='coerce').dt.year.fillna('').astype(str)
@@ -149,7 +156,7 @@ print("\nUkuran User-Movie Matrix:", user_movie_matrix.shape)
 user_movie_matrix_filled = user_movie_matrix.fillna(0)
 print("\n--- User-Movie Matrix Setelah Mengisi NaN dengan 0 (Partial View) ---")
 print(user_movie_matrix_filled.head())
-'''
+```
 
 ## Modeling
 Untuk Item-Based Collaborative Filtering, kita perlu menghitung kesamaan antar film. Kesamaan ini dihitung berdasarkan pola rating yang diberikan oleh pengguna.
@@ -165,7 +172,8 @@ Dapatkan skor kesamaan film tersebut dengan semua film lain dari matriks kesamaa
 Urutkan film-film lain berdasarkan skor kesamaan secara menurun.
 Saring film yang sudah ditonton oleh pengguna (untuk implementasi lebih lanjut) atau film itu sendiri.
 Ambil N film teratas sebagai rekomendasi.
-'''
+
+```
 # Transpose matriks untuk menghitung kesamaan antar film (item) baris adalah judul film, kolom adalah userId, dan nilai adalah rating.
 item_user_matrix = user_movie_matrix_filled.T
 
@@ -182,12 +190,12 @@ item_similarity_df = pd.DataFrame(item_similarity_matrix, index=item_user_matrix
 print("\n--- Item Similarity Matrix (Partial View) ---")
 print(item_similarity_df.head())
 print("\nUkuran Item Similarity Matrix:", item_similarity_df.shape)
-'''
+```
 
 ### Fungsi Rekomendasi 
 Menggunakan fungsi 'get_item_based_recommendations' berfunsgi menjadi sistem rekomendasi untuk mencari dan memberikan daftar film lainnya yang mirip dengan film yang dimasukkan. 
 
-'''
+```
 def get_item_based_recommendations(movie_title, item_similarity_df, num_recommendations=10):
     
     if movie_title not in item_similarity_df.columns:
@@ -205,7 +213,7 @@ def get_item_based_recommendations(movie_title, item_similarity_df, num_recommen
     recommendations = similar_movies.head(num_recommendations)
 
     return recommendations
-'''
+```
 
 ## Evaluation
 Proses evaluasi ini merupakan proses testing program sistem rekomendasi yang telah dibuat. Tujuannya untuk memastikan bahwa judul film yang ingin diuji benar-benar ada di dalam dataset dalam format yang benar.Berikut cara kerja program:
@@ -214,8 +222,8 @@ Proses evaluasi ini merupakan proses testing program sistem rekomendasi yang tel
    'sorted(...)': Mengurutkan daftar judul film tersebut secara alfabetis.
    'sorted_titles = ...' : Menyimpan daftar judul film yang sudah diurutkan ini ke dalam variabel sorted_titles.
 
-- 
-'''
+
+```
 print("Testing Rekomendasi")
 
 print("Contoh Judul Film yang Ada di Matriks Kesamaan (sorted)")
@@ -236,4 +244,4 @@ print(toy_story_titles)
 print(f"Judul yang mengandung 'Shawshank' (case-insensitive)")
 shawshank_titles = [title for title in sorted_titles if 'shawshank' in title.lower()]
 print(shawshank_titles)
-'''
+```
