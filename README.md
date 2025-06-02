@@ -2,13 +2,27 @@
 
 ## Project Overview
 
-Pada bagian ini, Kamu perlu menuliskan latar belakang yang relevan dengan proyek yang diangkat.
+Sistem rekomendasi merupakan tulang punggung platform digital modern, membantu pengguna menavigasi lautan konten dan produk. Di era di mana pilihan tidak terbatas, seperti film di layanan streaming, pengguna sering kali kesulitan menemukan apa yang benar-benar sesuai dengan selera mereka. Proyek ini bertujuan untuk mengatasi masalah "overload informasi" ini dengan membangun sistem rekomendasi film yang efektif, membantu pengguna menemukan film baru yang mungkin mereka sukai berdasarkan preferensi sebelumnya.
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Jelaskan mengapa dan bagaimana masalah tersebut harus diselesaikan
-- Menyertakan hasil riset terkait atau referensi. Referensi yang diberikan harus berasal dari sumber yang kredibel dan author yang jelas.
-- Format Referensi dapat mengacu pada penulisan sitasi [IEEE](https://journals.ieeeauthorcenter.ieee.org/wp-content/uploads/sites/7/IEEE_Reference_Guide.pdf), [APA](https://www.mendeley.com/guides/apa-citation-guide/) atau secara umum seperti [di sini](https://penerbitdeepublish.com/menulis-buku-membuat-sitasi-dengan-mudah/)
-- Sumber yang bisa digunakan [Scholar](https://scholar.google.com/)
+Dalam pengembangan sistem rekomendasi, salah satu pendekatan yang telah terbukti efektid adalah *Collaborative Filtering* yang metodenya berbasis item (*Item-Based Collaborative Filtering*). Menurut studi seminal yang dilakukan oleh Sarwar et al. (2001) dalam paper ["Item-Based Collaborative Filtering Recommendation Algorithms"](https://d1wqtxts1xzle7.cloudfront.net/106844907/p519-libre.pdf?1698016290=&response-content-disposition=inline%3B+filename%3DItem_based_collaborative_filtering_recom.pdf&Expires=1748863792&Signature=Udl3ODQZ3mJle1DCTTb1ns-XWy4HG6wY06Hw~2MblBB05FgO6DfwnYo-MsCyUxr4iWvopIcCG1ZpiOrwQWKKLk2aYRaGoW~8-tcmSy2F2~xKtPw283PCr-xsUcg7tIYqgiPMErhXEF17Uli5~ZbS84lk0uXrdcnD8sAiFKxtOKOUJLVYRE6rJmYFzBTuxO4wZ6YLWPbM8Fd0gR3BNbgENECweAxROxJM6t2g6R1RsCT~77QYA3kqHtsMjr1cQOUmZGSbmFQ7acKGHIPxqfAYlYv42JfuRjwX7GeYqGrG4b7KpsGa3wohVM2CDQeqEQc0OtznfxUiCVbU8FDFKTZsHw__&Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA), pendekatan ini menawarkan solusi skalabel dan efisien untuk mengatasi tantangan sparsity (data jarang) dan skalabilitas yang sering ditemui pada metode berbasis pengguna. Paper tersebut secara rinci menjelaskan bagaimana kemiripan antar item dihitung—seringkali menggunakan metrik seperti cosine similarity—berdasarkan pola rating yang diberikan oleh banyak pengguna, memungkinkan sistem untuk merekomendasikan item yang serupa dengan apa yang disukai pengguna di masa lalu.
+
+Kelebihan dari Item-Based Recommendation:
+1. Stabilitas dan skalabilitas.
+2. Rekomndasi yang lebih jelas.
+3. Efisiensi rekomendasi *real-time*.
+Kekurangan dari Item-Based Recommendation:
+1. *Cold-Start Problem* untuk item baru. 
+   Jika ada film atau lagu baru yang belum memiliki rating banyak dari penggunanya, sistem akan kesulitan untuk menghitung kemiripan dengan film atau lagu lainnya.
+2. Keterbatasan pada item yang tidak biasa
+   Jika ada item-item yang sangat jarang dinilai atau hanya disukai oleh segelintir *user* memungkin tidak memiliki cukup data untuk menghitung kemiripan yang benar.
+3. Ketergantungan pada kualitas rating.
+   Jika penilaian *user* tidak akurat atau bias, dapat mempengaruhi pada hasil sistem rekomendasi.
+   
+### Mengapa masalah rekomendasi perlu diselesaikan?
+Adanya "overload informasi" dalam sebuah film atau musik, membuat pengguna merasa kebingungan untuk memilih film yang ingin ditonton atau musik yang akan didengar. Sebagai contoh nyata saat ini, Netflix memiliki ribuan film dan serial, Spotify memiliki jutaan lagu yang bisa didengar, dan E-Commerce memiliki sangat banyak produk yang dijual oleh para *seller*. Jika tidak ada sistem rekomendasi dapat membuat pengguna merasa frustasi karena terllau banyak pilihan yang bisa membuat pengguna kewalahan dan akhirnya malas untuk memilih. Dengan begitu terjaidnya penurunan data tarik pengguna untuk menggunakan aplikasi. Dari *sisi developer* /penjual/ *seller* pendapatan berkurang dan mungkin saja barang yang dijual ini tersembunyi karena tertumpuk dengan pilihan yang sangat banyak. 
+
+## Referensi:
+- Sarwar, Badrul, George Karypis, Joseph Konstan, and John Riedl. "Item-based collaborative filtering recommendation algorithms." In Proceedings of the 10th international conference on World Wide Web, pp. 285-295. 2001.
 
 ## Business Understanding
 
