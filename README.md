@@ -24,7 +24,7 @@ Kekurangan dari Item-Based Recommendation:
 Adanya "overload informasi" dalam sebuah film atau musik, membuat pengguna merasa kebingungan untuk memilih film yang ingin ditonton atau musik yang akan didengar. Sebagai contoh nyata saat ini, Netflix memiliki ribuan film dan serial, Spotify memiliki jutaan lagu yang bisa didengar, dan E-Commerce memiliki sangat banyak produk yang dijual oleh para *seller*. Jika tidak ada sistem rekomendasi dapat membuat pengguna merasa frustasi karena terllau banyak pilihan yang bisa membuat pengguna kewalahan dan akhirnya malas untuk memilih. Dengan begitu terjaidnya penurunan data tarik pengguna untuk menggunakan aplikasi. Dari *sisi developer* /penjual/ *seller* pendapatan berkurang dan mungkin saja barang yang dijual ini tersembunyi karena tertumpuk dengan pilihan yang sangat banyak. 
 
 ## Referensi:
-- Sarwar, Badrul, George Karypis, Joseph Konstan, and John Riedl. "Item-based collaborative filtering recommendation algorithms." In Proceedings of the 10th international conference on World Wide Web, pp. 285-295. 2001.
+- Sarwar, B., George K., Joseph K., and John R.. "Item-based collaborative filtering recommendation algorithms." In Proceedings of the 10th international conference on World Wide Web, pp. 285-295. 2001.
 
 ## Business Understanding
 
