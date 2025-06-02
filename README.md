@@ -58,24 +58,24 @@ Tujuan proyek dibuat memiliki beberapa tujuan utama:
 ## Data Understanding
 
 The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-data film dari The Movie Database (TMDb) dan sistem rekomendasi MovieLens. Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan dua komponen utama: 
-1. 'movies_df' : berisi metadata film ekstensif dari movies_metadata.csv berjumlah 45.000 film dari TMDb. Variabel yang digunakan sebagai berikut:
-   - 'id' : ID film atau kode unik untuk setiap film berbeda.
-   - 'title' : Judul film, berhubungan dengan 'id'.
-   - 'release_date': Tanggal film tayang.
-2. ratings_df : berisi rating_small.csv yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
-  - 'userID' : ID *user* atau kode unik *user*.
-  - 'movieID' : Kode unik untuk film, dan setiap film memiliki kode unik yang berbeda.
-  - 'rating' : Penilaian dari *user* terhadap film.
+1. `movies_df` : berisi metadata film ekstensif dari movies_metadata.csv berjumlah 45.000 film dari TMDb. Variabel yang digunakan sebagai berikut:
+   - `id` : ID film atau kode unik untuk setiap film berbeda.
+   - `title` : Judul film, berhubungan dengan `id`.
+   - `release_date`: Tanggal film tayang.
+2. `ratings_df` : berisi rating_small.csv yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
+  - `userID` : ID *user* atau kode unik *user*.
+  - `movieID` : Kode unik untuk film, dan setiap film memiliki kode unik yang berbeda.
+  - `rating` : Penilaian dari *user* terhadap film.
 
 ### Tahapan Eksplorasi Data (Exploratory Data Analysis - EDA)
-- 'info()' : Untuk menampilkan ringkasan informasi tentang dataset.
-- 'head()' : Untuk menampilkan 5 baris pertama dari dataset.
-- 'describe()' : Untuk menghasilkan statistika deskriptif untuk kolom-kolom numerik.
-- 'isnull().sum()' : Membuat DataFrame baru dengan nilai True di mana ada nilai kosonh dan False di tempat lain dan juga menghitung jumlah nilai yang hilang. 
-- 'to_numeric()' : Mengubah kolom menjadi tipe data numerik.
-- 'errors="coerce"' : Jika kolom yang dipilih tidak bisa diubah menjadi angka, maka nilai tersebut diubah menjadi NaN.
-- 'dropna()' : Menghapus semua baris yang mempunya nilai NaN di kolom terpilih.
-- 'astype(int)' : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
+- `info()` : Untuk menampilkan ringkasan informasi tentang dataset.
+- `head()` : Untuk menampilkan 5 baris pertama dari dataset.
+- `describe()` : Untuk menghasilkan statistika deskriptif untuk kolom-kolom numerik.
+- `isnull().sum()` : Membuat DataFrame baru dengan nilai True di mana ada nilai kosong dan False di tempat lain dan juga menghitung jumlah nilai yang hilang. 
+- `to_numeric()` : Mengubah kolom menjadi tipe data numerik.
+- `errors='coerce'` : Jika kolom yang dipilih tidak bisa diubah menjadi angka, maka nilai tersebut diubah menjadi NaN.
+- `dropna()` : Menghapus semua baris yang mempunya nilai NaN di kolom terpilih.
+- `astype(int)` : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
 
 ```
 # Informasi dataset ratings
@@ -116,8 +116,8 @@ Tujuan pra-pemrosesan adalah untuk membersihkan dan menyiapkan data agar sesuai 
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
 
 ### Langkah-langkah Data Preprocessing:
-1. Standardisasi Judul Film: Gabungkan 'title' dengan tahun rilis 'release_date' untuk membuat judul unik.
-2. Menggabungkan dataframe 'ratings_df' dengan 'movies_df' untuk mendapatkan judul film yang distandardisasi.
+1. Standardisasi Judul Film: Gabungkan `title` dengan tahun rilis `release_date` untuk membuat judul unik.
+2. Menggabungkan dataframe `ratings_df` dengan `movies_df` untuk mendapatkan judul film yang distandardisasi.
    Penggabungan kedua dataframe ini untuk mendapatkan judul film yang distandarisasi menggunakan inner join untuk memastikan hanya film yang ada di kedua dataset yang disertakan.
 4. Membuat matriks pivot (User-Item Matrix).
 5. Menangani nilai NaN di matriks pivot (mengganti dengan 0).
