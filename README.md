@@ -28,34 +28,38 @@ Adanya "overload informasi" dalam sebuah film atau musik, membuat pengguna meras
 
 ## Business Understanding
 
-Pada bagian ini, Anda perlu menjelaskan proses klarifikasi masalah.
-
-Bagian laporan ini mencakup:
+Seiring dengan pesatnya pertumbuhan platform streaming film dan koleksi digital, pengguna dihadapkan pada volume konten yang sangat besar, seringkali mencapai ribuan hingga jutaan judul. Fenomena ini, yang dikenal sebagai information overload, menimbulkan beberapa tantangan signifikan bagi pengguna maupun penyedia layanan:
 
 ### Problem Statements
-
-Menjelaskan pernyataan masalah:
-- Pernyataan Masalah 1
-- Pernyataan Masalah 2
-- Pernyataan Masalah n
+Permasalahan yang ditemui sebagai berikut:
+- Kesulitan dalam penemuan konten.
+  *User* sering kali merasa kewalahan dengan banyaknya pilihan film yang tersedia, sehingga mereka kesulitan untuk memutuskan film apa yang akan ditonton. Hal ini dapat berujung pada waktu pencarian yang lama, frustasi, hingga tidak jadi menonton. 
+- Rendahnya tingkat engagement pengguna.
+  Tanpa panduan yang efektif, pengguna mungkin melewatkan film-film yang sebenarnya sangat relevan atau menarik bagi mereka. Akibatnya, interaksi *user* dengan platform (seperti durasi tonton atau frekuensi kunjungan) dapat menurun.
+- Potensi kehilangan pendapatan.
+  Bagi penyedia layanan, rendahnya engagement pengguna dapat berdampak langsung pada retensi pelanggan dan potensi monetisasi. *User* yang tidak menemukan nilai atau konten yang relevan cenderung kurang loyal terhadap platform.
 
 ### Goals
 
-Menjelaskan tujuan proyek yang menjawab pernyataan masalah:
-- Jawaban pernyataan masalah 1
-- Jawaban pernyataan masalah 2
-- Jawaban pernyataan masalah n
-
-Semua poin di atas harus diuraikan dengan jelas. Anda bebas menuliskan berapa pernyataan masalah dan juga goals yang diinginkan.
-
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Menambahkan bagian “Solution Approach” yang menguraikan cara untuk meraih goals. Bagian ini dibuat dengan ketentuan sebagai berikut: 
+Tujuan proyek dibuat memiliki beberapa tujuan utama:
+- Mempermudah penemuan film yang relevan.
+  Untuk membantu *user* menemukan film yang sesuai dengan preferensi secara efisien, mengurangi waktu pencarian, dan meningkatkan kepuasan *user*
+- Meningkatkan engagement dan retensi *user*.
+  Bagi penyedia layanan, rendahnya engagement pengguna dapat berdampak langsung pada retensi pelanggan dan potensi monetisasi. *User* yang tidak menemukan nilai atau konten yang relevan cenderung kurang loyal terhadap platform.
+- Memaksimalkan eksposur konten.
+  Sistem ini bertujuan untuk meningkatkan visibilitas film-film yang mungkin cocok dengan selera pengguna namun sulit ditemukan di antara koleksi yang masif.
 
     ### Solution statements
-    - Mengajukan 2 atau lebih solution approach (algoritma atau pendekatan sistem rekomendasi).
+    - Pendekatan Utama: Item-Based Collaborative Filtering:
+      Pendekatan ini akan menjadi inti dari sistem rekomendasi yang dibangun. Ide dasarnya adalah merekomendasikan film kepada seorang pengguna berdasarkan film-film lain yang serupa dengan film-film yang telah disukai pengguna tersebut di masa lalu. Kesamaan antar film dihitung berdasarkan pola rating yang diberikan oleh seluruh pengguna (misalnya, jika banyak pengguna yang suka Film A dan Film B, maka Film A dan Film B dianggap mirip). Metode ini efektif dalam menemukan rekomendasi yang "tidak terduga" dan tidak bergantung pada metadata item. Algoritma yan digunakan adalah Cosine Similiraty untuk menghitung kesamaan antar vektor rating film. 
+    - Pendekatan Alternatif: Model-Based Collaborative Filtering (Matrix Factorization seperti SVD):
+      Sebagai pengembangan di masa depan, pendekatan berbasis model Matrix Factorization dapat dipertimbangkan. Pendekatan ini bekerja dengan menguraikan matriks interaksi pengguna-item menjadi faktor-faktor laten tersembunyi yang merepresentasikan karakteristik pengguna dan item.
 
 ## Data Understanding
-Paragraf awal bagian ini menjelaskan informasi mengenai jumlah data, kondisi data, dan informasi mengenai data yang digunakan. Sertakan juga sumber atau tautan untuk mengunduh dataset. Contoh: [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/Restaurant+%26+consumer+data).
+MovieLens 100K adalah dataset klasik dan sangat cocok untuk memulai dengan sistem rekomendasi. Ukurannya yang ringkas (100.000 rating) memungkinkan pemrosesan yang cepat dan efisien, sehingga ideal untuk demonstrasi dan pembelajaran. Struktur datanya juga relatif bersih dan mudah dipahami, meminimalkan kebutuhan pra-pemrosesan yang kompleks. Format judul film yang konsisten juga membantu menghindari masalah pencarian judul yang sering muncul pada dataset yang lebih besar. Dataset ini terdiri dari 100.000 rating dari 943 pengguna untuk 1682 film. Setiap pengguna telah menilai setidaknya 20 film. Data rating diberikan pada skala 1-5 bintang.
+File utama yang akan kita gunakan: 
+- `u.data`: Berisi rating (user ID, item ID, rating, timestamp).
+- `u.item`: Berisi informasi film (item ID, judul film, tanggal rilis, genre, dll.). Kita hanya akan menggunakan item ID dan judul film.
 
 Selanjutnya, uraikanlah seluruh variabel atau fitur pada data. Sebagai contoh:  
 
