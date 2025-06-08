@@ -81,7 +81,7 @@ Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan d
 ```
 # Informasi dataset ratings
 print("Info DataFrame Ratings")
-ratings_df.info()
+print(ratings_df.info())
 print("5 Baris Pertama DataFrame Ratings")
 print(ratings_df.head())
 print("Statistik Deskriptif DataFrame Ratings")
@@ -94,16 +94,11 @@ print(ratings_df.isnull().sum())
 # Informasi Dataset Movies
 print("Info DataFrame Movies")
 
-# --- Perbaikan untuk masalah DtypeWarning dan AttributeError pada kolom 'id' ---
-# Coba konversi kolom 'id' ke numerik. Gunakan errors='coerce' untuk mengubah nilai non-numerik menjadi NaN.
 movies_df['id'] = pd.to_numeric(movies_df['id'], errors='coerce')
 
-# Hapus baris yang memiliki nilai NaN di kolom 'id' (ini adalah baris yang tidak bisa dikonversi ke numerik)
 movies_df = movies_df.dropna(subset=['id'])
 
-# Sekarang, konversi ke integer (setelah membersihkan NaN)
 movies_df['id'] = movies_df['id'].astype(int)
-# --- Akhir perbaikan kolom 'id' ---
 
 movies_df.info()
 print("5 Baris Pertama DataFrame Movies")
@@ -117,43 +112,45 @@ Tujuan pra-pemrosesan adalah untuk membersihkan dan menyiapkan data agar sesuai 
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
 
 ### Langkah-langkah Data Preprocessing:
-1. Standardisasi Judul Film: Gabungkan `title` dengan tahun rilis `release_date` untuk membuat judul unik.
-2. Menggabungkan dataframe `ratings_df` dengan `movies_df` untuk mendapatkan judul film yang distandardisasi.
-   Penggabungan kedua dataframe ini untuk mendapatkan judul film yang distandarisasi menggunakan inner join untuk memastikan hanya film yang ada di kedua dataset yang disertakan.
-4. Membuat matriks pivot (User-Item Matrix).
-5. Menangani nilai NaN di matriks pivot (mengganti dengan 0).
-
+1. Standardisasi Judul Film (`movies_df`):
+   - `movies_df['year'] = pd.to_datetime(movies_df['release_date'], errors='coerce').dt.year.fillna('').astype(str)`:
+     Baris ini bertujuan untuk mengekstraksi tahun rilis dari kolom `release_date`. `pd.to_datetime` mencoba mengonversi `release_date` menjadi format tanggal; `errors='coerce'` akan mengubah nilai yang tidak valid menjadi `NaT` (Not a Time). Kemudian, `.dt.year` mengambil tahun, `.fillna('')` mengisi nilai yang hilang dengan string kosong, dan `.astype(str)` mengubahnya menjadi tipe data string. Ini dilakukan untuk mengatasi potensi duplikasi judul film yang sama tetapi dirilis pada tahun yang berbeda.
+   - `movies_df['full_title'] = movies_df['title'].str.strip() + ' (' + movies_df['year'].str.strip() + ')'`: Kolom baru `full_title` dibuat dengan menggabungkan judul film (`title`) dan tahun rilis (`year`). Penggunaan `.str.strip()` membantu menghilangkan spasi ekstra di awal atau akhir string. Format `Judul (Tahun)` ini menciptakan identifikasi unik untuk setiap film.
+   - `movies_df['full_title'] = movies_df['full_title'].replace(' \(\)', '', regex=True)`: Baris ini menghilangkan `()` dari `full_title` jika `year` kosong atau tidak valid (misalnya, jika `release_date` asli tidak ada).
+   - `movies_df['full_title'] = movies_df['full_title'].fillna(movies_df['title'])`: Baris ini memastikan bahwa jika `full_title` masih `NaN` (mungkin karena `title` atau `year` asli bermasalah), maka akan diisi kembali dengan nilai dari kolom `title` asli.
+   - `movies_df_filtered = movies_df[['id', 'full_title']].copy()`: Membuat DataFrame baru yang hanya berisi kolom `id` dan `full_title` yang sudah distandardisasi. Penggunaan `.copy()` mencegah `SettingWithCopyWarning`.
+   - `movies_df_filtered.rename(columns={'id': 'movieId', 'full_title': 'title'}, inplace=True)`: Mengganti nama kolom `id` menjadi `movieId` dan `full_title` menjadi `title` agar konsisten dengan nama kolom di `ratings_df`, yang diperlukan untuk penggabungan selanjutnya.
+2. Menggabungkan DataFrame `ratings_df` dengan `movies_df_filtered`:
+   `data = pd.merge(ratings_df, movies_df_filtered, on='movieId', how='inner')`: Kedua DataFrame (`ratings_df` dan `movies_df_filtered`) digabungkan berdasarkan kolom `movieId`. `how='inner'` memastikan hanya baris-baris (film) yang memiliki `movieId` yang cocok di kedua DataFrame yang akan disertakan dalam DataFrame `data` yang baru. Hasilnya adalah satu DataFrame yang berisi `userId`, `movieId`, `rating`, dan `title` (yaitu `full_title` yang sudah distandardisasi).
+3. Membuat Matriks *User_Item* (Pivot Table):
+   - `user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')`: Baris ini adalah langkah krusial untuk membuat matriks *User-Item*.
+      - `index='userId'`: Setiap baris matriks akan mewakili seorang pengguna.
+      - `columns='title'`: Setiap kolom matriks akan mewakili sebuah film (dengan judul yang sudah distandardisasi).
+      - `values='rating'`: Nilai di setiap sel matriks adalah rating yang diberikan oleh `userId` tertentu untuk `title` film tertentu. Jika seorang pengguna belum memberikan rating pada film tertentu, sel tersebut akan berisi `NaN`.
+   - `print("\n--- User-Movie Matrix (Partial View) ---")` dan `print(user_movie_matrix.head())`: Menampilkan lima baris pertama dari matriks yang baru dibuat untuk melihat strukturnya.
+   - `print("\nUkuran User-Movie Matrix:", user_movie_matrix.shape)`: Menampilkan dimensi (jumlah pengguna vs. jumlah film) dari matriks tersebut.
+4. Menangani Nilai `NaN di Matriks *User-Item*:
+   - `user_movie_matrix_filled = user_movie_matrix.fillna(0)`: Nilai `NaN` dalam `user_movie_matrix` diisi dengan 0. Dalam konteks sistem rekomendasi, mengisi `NaN` dengan 0 sering kali berarti bahwa tidak adanya rating dianggap sebagai tidak adanya interaksi atau bahwa pengguna tidak memiliki preferensi (netral) terhadap film tersebut. Ini penting karena algoritma kesamaan memerlukan input numerik.
+   - `print("\n--- User-Movie Matrix Setelah Mengisi NaN dengan 0 (Partial View) ---")` dan `print(user_movie_matrix_filled.head())`: Menampilkan kembali lima baris pertama setelah pengisian NaN untuk memverifikasi perubahannya.
 ```
-# Standardisasi Judul Film: Tambahkan tahun rilis ke judul untuk mengatasi duplikasi nama film.
-# Pertama, ekstrak tahun dari 'release_date'
 movies_df['year'] = pd.to_datetime(movies_df['release_date'], errors='coerce').dt.year.fillna('').astype(str)
 
-# Buat kolom 'full_title' dengan format "Judul (Tahun)"
-# Gunakan .str.strip() untuk membersihkan spasi ekstra
 movies_df['full_title'] = movies_df['title'].str.strip() + ' (' + movies_df['year'].str.strip() + ')'
 
-# Jika judul atau tahun mungkin NaN/kosong setelah konversi
-# Hapus " ()" jika tahun kosong atau judul asli memang tidak ada tahun
 movies_df['full_title'] = movies_df['full_title'].replace(' \(\)', '', regex=True)
-movies_df['full_title'] = movies_df['full_title'].fillna(movies_df['title']) # Jika full_title masih NaN, gunakan title asli
+movies_df['full_title'] = movies_df['full_title'].fillna(movies_df['title'])
 
-# Pilih kolom yang relevan dan ganti nama 'id' menjadi 'movieId'
 movies_df_filtered = movies_df[['id', 'full_title']].copy()
 movies_df_filtered.rename(columns={'id': 'movieId', 'full_title': 'title'}, inplace=True)
 
-# Gabungkan ratings_df dengan movies_df_filtered untuk mendapatkan judul film yang distandardisasi
-# Gunakan inner join untuk memastikan hanya film yang ada di kedua dataset yang disertakan.
 data = pd.merge(ratings_df, movies_df_filtered, on='movieId', how='inner')
 
-# Buat matriks user-item (pivot table)
-# rows: userId, columns: title (full_title), values: rating
 user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
 
 print("\n--- User-Movie Matrix (Partial View) ---")
 print(user_movie_matrix.head())
 print("\nUkuran User-Movie Matrix:", user_movie_matrix.shape)
 
-# Mengisi NaN dengan 0 (untuk perhitungan kesamaan, ini artinya tidak ada rating)
 user_movie_matrix_filled = user_movie_matrix.fillna(0)
 print("\n--- User-Movie Matrix Setelah Mengisi NaN dengan 0 (Partial View) ---")
 print(user_movie_matrix_filled.head())
