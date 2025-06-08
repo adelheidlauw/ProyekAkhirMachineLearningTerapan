@@ -165,24 +165,21 @@ Matriks Kesamaan: Kita akan menghitung Cosine Similarity antar film. Cosine Simi
 
 ### Algoritma Rekomendasi:
 
-Pilih film yang dijadikan dasar rekomendasi.
-Dapatkan skor kesamaan film tersebut dengan semua film lain dari matriks kesamaan.
-Urutkan film-film lain berdasarkan skor kesamaan secara menurun.
-Saring film yang sudah ditonton oleh pengguna (untuk implementasi lebih lanjut) atau film itu sendiri.
-Ambil N film teratas sebagai rekomendasi.
+- Pilih film yang dijadikan dasar rekomendasi.
+- Dapatkan skor kesamaan film tersebut dengan semua film lain dari matriks kesamaan.
+- Urutkan film-film lain berdasarkan skor kesamaan secara menurun.
+- Saring film yang sudah ditonton oleh pengguna (untuk implementasi lebih lanjut) atau film itu sendiri.
+- Ambil N film teratas sebagai rekomendasi.
 
 ```
-# Transpose matriks untuk menghitung kesamaan antar film (item) baris adalah judul film, kolom adalah userId, dan nilai adalah rating.
 item_user_matrix = user_movie_matrix_filled.T
 
 print("\n--- Item-User Matrix (Partial View) ---")
 print(item_user_matrix.head())
 print("\nUkuran Item-User Matrix:", item_user_matrix.shape)
 
-# Menghitung Cosine Similarity antar film
 item_similarity_matrix = cosine_similarity(item_user_matrix)
 
-# Membuat DataFrame dari matriks kesamaan untuk akses yang lebih mudah
 item_similarity_df = pd.DataFrame(item_similarity_matrix, index=item_user_matrix.index, columns=item_user_matrix.index)
 
 print("\n--- Item Similarity Matrix (Partial View) ---")
@@ -195,42 +192,184 @@ Menggunakan fungsi 'get_item_based_recommendations' berfunsgi menjadi sistem rek
 
 ```
 def get_item_based_recommendations(movie_title, item_similarity_df, num_recommendations=10):
-    
+
     if movie_title not in item_similarity_df.columns:
         print(f"Film '{movie_title}' tidak ditemukan dalam dataset kesamaan.")
         print("Mohon periksa ejaan atau format judul yang benar.")
         return pd.Series()
 
-    # Dapatkan skor kesamaan untuk film ini dengan semua film lain
     similar_movies = item_similarity_df[movie_title].sort_values(ascending=False)
 
-    # Hapus film itu sendiri dari daftar rekomendasi
     similar_movies = similar_movies.drop(movie_title, errors='ignore')
 
-    # Ambil N rekomendasi teratas
     recommendations = similar_movies.head(num_recommendations)
 
     return recommendations
 ```
+## Contoh Output Rekomendasi
+Setelah model kesamaan antar item (`item_similarity_df`) dibuat dan fungsi rekomendasi (`get_item_based_recommendations`) didefinisikan, selanjutnya dapat menguji sistem rekomendasi dengan memberikan beberapa juudl film sebagai *input*. Berikut adalah contoh hasil rekomendasi untuk beberapa film:
+```
+Total film unik di matriks kesamaan: 2830
+
+--- Rekomendasi untuk 'Pulp Fiction (1994)' ---
+Menggunakan judul: 'Pulp Fiction (1994.0)'
+title
+Lord of Illusions (1995.0)     0.468896
+Ödipussi (1988.0)              0.456318
+Eaten Alive! (1980.0)          0.456318
+The Inquisitor (1981.0)        0.456318
+CQ (2001.0)                    0.456318
+Modern Life (2008.0)           0.453065
+The Cardinal (1963.0)          0.443426
+Beste Zeit (2008.0)            0.424130
+Monsieur Batignole (2002.0)    0.419873
+What Lies Beneath (2000.0)     0.405616
+Name: Pulp Fiction (1994.0), dtype: float64
+
+--- Rekomendasi untuk 'Toy Story (1995)' ---
+Judul 'Toy Story (1995)' tidak ditemukan dalam format apapun di dataset.
+
+--- Rekomendasi untuk 'Shawshank Redemption, The (1994)' ---
+Menggunakan judul: 'The Shawshank Redemption (1994.0)'
+title
+Natural Born Killers (1994.0)                 0.723102
+The Rolling Stones: Gimme Shelter (1970.0)    0.721118
+1408 (2007.0)                                 0.700140
+The Cider House Rules (1999.0)                0.700140
+What Lies Beneath (2000.0)                    0.700140
+Groundhog Day (1993.0)                        0.700140
+Helen (2009.0)                                0.700140
+A Trip to the Moon (1902.0)                   0.700140
+Ladyhawke (1985.0)                            0.700140
+The Birds (1963.0)                            0.700140
+Name: The Shawshank Redemption (1994.0), dtype: float64
+
+--- Rekomendasi untuk 'Film Fiksi Fantasi (2025)' ---
+Film 'Film Fiksi Fantasi (2025)' tidak ditemukan dalam dataset kesamaan.
+Mohon periksa ejaan atau format judul yang benar.
+Tidak ada rekomendasi yang ditemukan untuk 'Film Fiksi Fantasi (2025)'.
+```
+Dari contoh di atas, terlihat bahwa sistem berhasil memberikan rekomendasi film yang mirip dengan "Pulp Fiction (1994)" dan "The Shawshank Redemption (1994)". Sistem juga menangani kasus di mana film yang dicari tidak ditemukan dalam dataset, seperti "Toy Stoty (1995)" (kemungkinan karena perbedaan format judul) dan "Film Fiksi Fantasi (2025)" yang memang tidak ada. Ini menunjukkan kemampuan model untuk menentukan kemiripan berdasarkan pola rating dan memberikan *feedback* yang sesuai jika film tiddak ditemukan. 
 
 ## Evaluation
-Proses evaluasi ini merupakan proses testing program sistem rekomendasi yang telah dibuat. Tujuannya untuk memastikan bahwa judul film yang ingin diuji benar-benar ada di dalam dataset dalam format yang benar.Berikut cara kerja program:
-- 'sorted_titles = sorted(item_similarity_df.columns.tolist())' : Berfungsi untuk membuat daftar semua judul film yang dikenal oleh sistem.
-   'item_similarity_df.columns.tolist()': Mengambil semua nama kolom dari 'item_similarity_df'. Kolom-kolom ini adalah judul film yang sudah distandardisasi dan ada di matriks kemiripan Anda. Hasilnya adalah sebuah daftar judul film.
-   'sorted(...)': Mengurutkan daftar judul film tersebut secara alfabetis.
-   'sorted_titles = ...' : Menyimpan daftar judul film yang sudah diurutkan ini ke dalam variabel sorted_titles.
+Evaluasi merupakan tahapan krusial untuk mengukur seberapa efektif dan akurat sistem rekomendasi yang telah dibangun. Selain pengujian fungsional dasar (seperti memastikan film ditemukan dan rekomendasi dihasilkan), evaluasi kuantitatif dengan metrik yang relevan sangat penting untuk memahami kinerja model dalam merekomendasikan item yang relevan kepada pengguna.
 
+### Metrik Evaluasi Kuantitatif
+Untuk sistem rekomendasi berbasis item, metrik yang umum digunakan untuk mengukur kinerja Top-N rekomendasi adalah Precision@K dan Recall@K. Metrik-metrik ini mengukur seberapa baik sistem dalam mengidentifikasi item yang relevan dalam daftar rekomendasi teratas (Top-N).
+
+1. Precision@K (Precision at K):
+- Definisi: Mengukur proporsi item relevan dalam daftar `K` rekomendasi teratas yang diberikan oleh sistem.
+- Interpretasi: Menjawab pertanyaan: "Dari semua item yang direkomendasikan, berapa banyak yang benar-benar relevan (disukai/diinteraksikan oleh pengguna)?"
+- Relevansi: Penting untuk mengukur "kualitas" rekomendasi. Nilai Precision@K yang tinggi menunjukkan bahwa sebagian besar rekomendasi yang diberikan adalah item yang benar-benar diinginkan oleh pengguna.
+2. Recall@K (Recall at K):
+- Definisi: Mengukur proporsi item relevan yang sebenarnya dari seluruh item relevan yang mungkin ada (di dataset uji) yang berhasil ditemukan dan disertakan dalam daftar `K` rekomendasi teratas.
+- Interpretasi: Menjawab pertanyaan: "Dari semua item relevan yang seharusnya ditemukan untuk pengguna ini, berapa banyak yang berhasil ditemukan oleh sistem dalam daftar rekomendasi teratas?"
+- Relevansi: Penting untuk mengukur "cakupan" sistem. Nilai Recall@K yang tinggi menunjukkan bahwa sistem mampu menangkap sebagian besar item yang relevan bagi pengguna.
+3.  F1-score@K (F1-score at K):
+- Definisi: Merupakan rata-rata harmonis dari Precision@K dan Recall@K, memberikan keseimbangan antara keduanya.
+- Interpretasi: Memberikan gambaran tunggal tentang kinerja model ketika Precision dan Recall sama-sama penting.
+
+### Metodologi Perhitungan
+Untuk menghitung metrik ini, langkah-langkah yang dilakukan:
+
+1. Pembagian Data Per Pengguna: Dataset rating awal (`data`) dibagi menjadi set pelatihan (training) dan set pengujian (testing) secara terpisah untuk setiap pengguna. Ini dilakukan dengan membagi rating yang dimiliki oleh seorang pengguna ke dalam dua subset (misalnya, 70% untuk pelatihan, 30% untuk pengujian).
+2. Identifikasi Item Relevan: Untuk setiap pengguna di set pengujian, film-film yang diberi rating tinggi (misalnya, rating ≥4.0) diidentifikasi sebagai "item relevan" (ground truth).
+3. Generasi Rekomendasi: Berdasarkan film-film yang dirating oleh pengguna di set pelatihan, sistem rekomendasi menghasilkan daftar Top-K film yang direkomendasikan. Film yang sudah pernah dirating oleh pengguna di set pelatihan dikecualikan dari daftar rekomendasi.
+4. Perhitungan Komponen Metrik: Untuk setiap pengguna, dihitung:
+- True Positives (TP): Jumlah item yang direkomendasikan DAN relevan (ada di daftar item relevan set pengujian).
+- False Positives (FP): Jumlah item yang direkomendasikan TAPI tidak relevan.
+- False Negatives (FN): Jumlah item yang relevan TAPI tidak direkomendasikan.
+5. Perhitungan Precision@K dan Recall@K Individual: Precision@K dan Recall@K dihitung untuk setiap pengguna berdasarkan TP, FP, dan FN.
+6. Agregasi: Rata-rata dari semua nilai Precision@K dan Recall@K dari seluruh pengguna dihitung untuk mendapatkan metrik kinerja model secara keseluruhan. F1-score@K kemudian dihitung dari rata-rata Precision dan Recall.
+
+### Hasil Evaluasi Kuantitatif
+Berdasarkan perhitungan metrik evaluasi yang dilakukan di notebook pada model Item-Based Collaborative Filtering ini dengan `K = 10` (jumlah rekomendasi teratas yang dipertimbangkan), diperoleh hasil sebagai berikut:
+
+Average Precision@10: `[INSERT_NILAI_PRECISION_DISINI]`
+Interpretasi: Nilai ini menunjukkan bahwa rata-rata sekitar `[INSERT_NILAI_PRECISION_DISINI x 100]%` dari 10 film yang direkomendasikan kepada pengguna adalah film yang relevan atau disukai oleh pengguna tersebut di data uji.
+Average Recall@10: `[INSERT_NILAI_RECALL_DISINI]`
+Interpretasi: Nilai ini menunjukkan bahwa rata-rata sistem berhasil menangkap sekitar `[INSERT_NILAI_RECALL_DISINI x 100]%` dari total film relevan yang seharusnya ditemukan untuk pengguna di data uji.
+Average F1-score@10: `[INSERT_NILAI_F1_SCORE_DISINI]`
+Interpretasi: Nilai ini mencerminkan keseimbangan antara presisi dan cakupan rekomendasi, dengan nilai `[INSERT_NILAI_F1_SCORE_DISINI]` menunjukkan kinerja model secara keseluruhan dalam mengidentifikasi item relevan.
+
+```
+unique_users = data['userId'].unique()
+
+all_precision = []
+all_recall = []
+K = 10 
+
+for user_id in unique_users:
+    user_data = data[data['userId'] == user_id]
+
+    if len(user_data) < 2: 
+        continue
+
+    train_user_ratings, test_user_ratings = train_test_split(user_data, test_size=0.3, random_state=42)
+
+    relevant_items_in_test = set(test_user_ratings[test_user_ratings['rating'] >= 4.0]['title'].unique())
+
+    if not relevant_items_in_test: 
+        continue
+
+    items_rated_by_user_in_train = train_user_ratings['title'].unique()
+
+    user_recommendations = pd.Series(dtype=float)
+    for movie_title in items_rated_by_user_in_train:
+        recs = get_item_based_recommendations(movie_title, item_similarity_df, num_recommendations=K)
+        if not recs.empty:
+            user_recommendations = pd.concat([user_recommendations, recs])
+
+    user_recommendations = user_recommendations.drop(items_rated_by_user_in_train, errors='ignore')
+    user_recommendations = user_recommendations.sort_values(ascending=False).head(K) # Ambil top K
+
+    recommended_items = set(user_recommendations.index.tolist())
+
+    true_positives = len(recommended_items.intersection(relevant_items_in_test))
+
+    false_positives = len(recommended_items.difference(relevant_items_in_test))
+
+    false_negatives = len(relevant_items_in_test.difference(recommended_items))
+
+    if (true_positives + false_positives) > 0:
+        precision_at_k = true_positives / (true_positives + false_positives)
+        all_precision.append(precision_at_k)
+
+    if (true_positives + false_negatives) > 0:
+        recall_at_k = true_positives / (true_positives + false_negatives)
+        all_recall.append(recall_at_k)
+
+average_precision_at_k = np.mean(all_precision) if all_precision else 0
+average_recall_at_k = np.mean(all_recall) if all_recall else 0
+
+print(f"\n--- Hasil Evaluasi Metrik untuk K={K} ---")
+print(f"Average Precision@{K}: {average_precision_at_k:.4f}")
+print(f"Average Recall@{K}: {average_recall_at_k:.4f}")
+
+if (average_precision_at_k + average_recall_at_k) > 0:
+    average_f1_score_at_k = 2 * (average_precision_at_k * average_recall_at_k) / (average_precision_at_k + average_recall_at_k)
+    print(f"Average F1-score@{K}: {average_f1_score_at_k:.4f}")
+else:
+    average_f1_score_at_k = 0
+    print(f"Average F1-score@{K}: Tidak dapat dihitung (Precision + Recall = 0)")
+```
+
+### Pengujian Fungsional (Verifikasi)
+Selain metrik kuantitatif, pengujian fungsional juga dilakukan untuk memverifikasi bahwa sistem dapat mencari judul film dengan benar dan memberikan rekomendasi. Ini mencakup:
+
+- Membuat daftar semua judul film yang dikenal oleh sistem.
+- Mencari film spesifik (misalnya, 'Pulp Fiction (1994)', 'Toy Story (1995)', 'The Shawshank Redemption (1994)') untuk memastikan keberadaan dan format judul yang benar.
+- Menampilkan contoh rekomendasi untuk judul yang ada dan feedback untuk judul yang tidak ditemukan, seperti yang telah ditunjukkan pada bagian Modeling. Ini memastikan bahwa fungsi `get_item_based_recommendations` bekerja sesuai harapan dan memberikan output yang informatif kepada pengguna.
 
 ```
 print("Testing Rekomendasi")
 
 print("Contoh Judul Film yang Ada di Matriks Kesamaan (sorted)")
-# Urutkan secara alfabetis untuk memudahkan pencarian visual
+
 sorted_titles = sorted(item_similarity_df.columns.tolist())
 
-print(sorted_titles[0:20]) # Munculin 20 judul pertama
+print(sorted_titles[0:20])
 
-# Cari film spesifik
 print(f"Judul yang mengandung 'Pulp' (case-insensitive)")
 pulp_titles = [title for title in sorted_titles if 'pulp' in title.lower()]
 print(pulp_titles)
@@ -243,3 +382,5 @@ print(f"Judul yang mengandung 'Shawshank' (case-insensitive)")
 shawshank_titles = [title for title in sorted_titles if 'shawshank' in title.lower()]
 print(shawshank_titles)
 ```
+
+
