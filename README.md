@@ -59,11 +59,11 @@ Tujuan proyek dibuat memiliki beberapa tujuan utama:
 
 The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-data film dari The Movie Database (TMDb) dan sistem rekomendasi MovieLens. Sumber dataset dapat diakses dan diunduh dari Kaggle dengan judul (The Movies Dataset)[https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset].
 Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan dua komponen utama. 
-1. `movies_df` : berisi metadata film ekstensif dari movies_metadata.csv berjumlah 45.000 film dari TMDb. Variabel yang digunakan sebagai berikut:
+1. `movies_df` : berisi metadata film ekstensif dari `movies_metadata.csv` berjumlah 45.000 film dari TMDb. Variabel yang digunakan sebagai berikut:
    - `id` : ID film atau kode unik untuk setiap film berbeda.
    - `title` : Judul film, berhubungan dengan `id`.
    - `release_date`: Tanggal film tayang.
-2. `ratings_df` : berisi rating_small.csv yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
+2. `ratings_df` : berisi `rating_small.csv` yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
   - `userID` : ID *user* atau kode unik *user*.
   - `movieID` : Kode unik untuk film, dan setiap film memiliki kode unik yang berbeda.
   - `rating` : Penilaian dari *user* terhadap film.
