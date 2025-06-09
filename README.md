@@ -95,10 +95,6 @@ Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan d
 - `head()` : Untuk menampilkan 5 baris pertama dari dataset.
 - `describe()` : Untuk menghasilkan statistika deskriptif untuk kolom-kolom numerik.
 - `isnull().sum()` : Membuat DataFrame baru dengan nilai True di mana ada nilai kosong dan False di tempat lain dan juga menghitung jumlah nilai yang hilang. 
-- `to_numeric()` : Mengubah kolom menjadi tipe data numerik.
-- `errors='coerce'` : Jika kolom yang dipilih tidak bisa diubah menjadi angka, maka nilai tersebut diubah menjadi NaN.
-- `dropna()` : Menghapus semua baris yang mempunya nilai NaN di kolom terpilih.
-- `astype(int)` : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
 
 ## Data Preprocessing
 Tujuan pra-pemrosesan adalah untuk membersihkan dan menyiapkan data agar sesuai untuk model sistem rekomendasi. Untuk Item-Based Collaborative Filtering, kita perlu membuat matriks pengguna-item (User-Item Matrix) di mana barisnya adalah pengguna, kolomnya adalah item, dan nilai di selnya adalah rating.
