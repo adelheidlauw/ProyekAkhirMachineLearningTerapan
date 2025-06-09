@@ -195,22 +195,22 @@ Dari contoh di atas, terlihat bahwa sistem berhasil memberikan rekomendasi film 
 Evaluasi merupakan tahapan krusial untuk mengukur seberapa efektif dan akurat sistem rekomendasi yang telah dibangun. Selain pengujian fungsional dasar (seperti memastikan film ditemukan dan rekomendasi dihasilkan), evaluasi kuantitatif dengan metrik yang relevan sangat penting untuk memahami kinerja model dalam merekomendasikan item yang relevan kepada pengguna.
 
 ### Metrik Evaluasi Kuantitatif
-Untuk sistem rekomendasi berbasis item, metrik yang umum digunakan untuk mengukur kinerja Top-N rekomendasi adalah Precision@K dan Recall@K. Metrik-metrik ini mengukur seberapa baik sistem dalam mengidentifikasi item yang relevan dalam daftar rekomendasi teratas (Top-N).
+Untuk sistem rekomendasi berbasis item, metrik yang umum digunakan untuk mengukur kinerja Top-N rekomendasi adalah Precision@K dan Recall@K. Metrik-metrik ini mengukur seberapa baik sistem dalam mengidentifikasi item yang relevan dalam daftar rekomendasi teratas (Top-N). Program juga akan menyertakan F1-score@K sebagai metrik gabungan.
 
 1. Precision@K (Precision at K):
 - Definisi: Mengukur proporsi item relevan dalam daftar `K` rekomendasi teratas yang diberikan oleh sistem.
 - Interpretasi: Menjawab pertanyaan: "Dari semua item yang direkomendasikan, berapa banyak yang benar-benar relevan (disukai/diinteraksikan oleh pengguna)?"
-- Relevansi: Penting untuk mengukur "kualitas" rekomendasi. Nilai Precision@K yang tinggi menunjukkan bahwa sebagian besar rekomendasi yang diberikan adalah item yang benar-benar diinginkan oleh pengguna.
+- Relevansi: Penting untuk mengukur "kualitas" rekomendasi, menunjukkan seberapa sedikit "sampah" yang ada di daftar rekomendasi.
 2. Recall@K (Recall at K):
 - Definisi: Mengukur proporsi item relevan yang sebenarnya dari seluruh item relevan yang mungkin ada (di dataset uji) yang berhasil ditemukan dan disertakan dalam daftar `K` rekomendasi teratas.
 - Interpretasi: Menjawab pertanyaan: "Dari semua item relevan yang seharusnya ditemukan untuk pengguna ini, berapa banyak yang berhasil ditemukan oleh sistem dalam daftar rekomendasi teratas?"
-- Relevansi: Penting untuk mengukur "cakupan" sistem. Nilai Recall@K yang tinggi menunjukkan bahwa sistem mampu menangkap sebagian besar item yang relevan bagi pengguna.
+- Relevansi: Penting untuk mengukur "cakupan" sistem, menunjukkan seberapa banyak item relevan yang berhasil "ditangkap".
 3.  F1-score@K (F1-score at K):
 - Definisi: Merupakan rata-rata harmonis dari Precision@K dan Recall@K, memberikan keseimbangan antara keduanya.
 - Interpretasi: Memberikan gambaran tunggal tentang kinerja model ketika Precision dan Recall sama-sama penting.
 
 ### Metodologi Perhitungan
-Untuk menghitung metrik ini, langkah-langkah yang dilakukan:
+Untuk menghitung metrik ini, langkah-langkah yang dilakukan pada notebook:
 
 1. Pembagian Data Per Pengguna: Dataset rating awal (`data`) dibagi menjadi set pelatihan (training) dan set pengujian (testing) secara terpisah untuk setiap pengguna. Ini dilakukan dengan membagi rating yang dimiliki oleh seorang pengguna ke dalam dua subset (misalnya, 70% untuk pelatihan, 30% untuk pengujian).
 2. Identifikasi Item Relevan: Untuk setiap pengguna di set pengujian, film-film yang diberi rating tinggi (misalnya, rating ≥4.0) diidentifikasi sebagai "item relevan" (ground truth).
@@ -225,12 +225,12 @@ Untuk menghitung metrik ini, langkah-langkah yang dilakukan:
 ### Hasil Evaluasi Kuantitatif
 Berdasarkan perhitungan metrik evaluasi yang dilakukan di notebook pada model Item-Based Collaborative Filtering ini dengan `K = 10` (jumlah rekomendasi teratas yang dipertimbangkan), diperoleh hasil sebagai berikut:
 
-Average Precision@10: `[INSERT_NILAI_PRECISION_DISINI]`
-Interpretasi: Nilai ini menunjukkan bahwa rata-rata sekitar `[INSERT_NILAI_PRECISION_DISINI x 100]%` dari 10 film yang direkomendasikan kepada pengguna adalah film yang relevan atau disukai oleh pengguna tersebut di data uji.
-Average Recall@10: `[INSERT_NILAI_RECALL_DISINI]`
-Interpretasi: Nilai ini menunjukkan bahwa rata-rata sistem berhasil menangkap sekitar `[INSERT_NILAI_RECALL_DISINI x 100]%` dari total film relevan yang seharusnya ditemukan untuk pengguna di data uji.
-Average F1-score@10: `[INSERT_NILAI_F1_SCORE_DISINI]`
-Interpretasi: Nilai ini mencerminkan keseimbangan antara presisi dan cakupan rekomendasi, dengan nilai `[INSERT_NILAI_F1_SCORE_DISINI]` menunjukkan kinerja model secara keseluruhan dalam mengidentifikasi item relevan.
+- Average Precision@10: `0.0000`
+Interpretasi: Nilai ini menunjukkan bahwa rata-rata sekitar `0.0000%` dari 10 film yang direkomendasikan kepada pengguna adalah film yang relevan atau disukai oleh pengguna tersebut di data uji.
+- Average Recall@10: `0.0000`
+Interpretasi: Nilai ini menunjukkan bahwa rata-rata sistem berhasil menangkap sekitar `0.0000%` dari total film relevan yang seharusnya ditemukan untuk pengguna di data uji.
+- Average F1-score@10: `0.0000`
+Interpretasi: Nilai ini mencerminkan keseimbangan antara presisi dan cakupan rekomendasi, dengan nilai `0.0000` menunjukkan kinerja model secara keseluruhan dalam mengidentifikasi item relevan. (F1-score 0 terjadi karena Precision dan Recall bernilai 0).
 
 ### Pengujian Fungsional (Verifikasi)
 Selain metrik kuantitatif, pengujian fungsional juga dilakukan untuk memverifikasi bahwa sistem dapat mencari judul film dengan benar dan memberikan rekomendasi. Ini mencakup:
