@@ -59,14 +59,36 @@ Tujuan proyek dibuat memiliki beberapa tujuan utama:
 
 The Movie Dataset adalah dataset yang diambil dari Kaggle yang berisikan data-data film dari The Movie Database (TMDb) dan sistem rekomendasi MovieLens. Sumber dataset dapat diakses dan diunduh dari Kaggle dengan judul (The Movies Dataset)[https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset].
 Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan dua komponen utama. 
-1. `movies_df` : berisi metadata film ekstensif dari `movies_metadata.csv` berjumlah 45.000 film dari TMDb. Variabel yang digunakan sebagai berikut:
-   - `id` : ID film atau kode unik untuk setiap film berbeda.
-   - `title` : Judul film, berhubungan dengan `id`.
-   - `release_date`: Tanggal film tayang.
-2. `ratings_df` : berisi `rating_small.csv` yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
-  - `userID` : ID *user* atau kode unik *user*.
-  - `movieID` : Kode unik untuk film, dan setiap film memiliki kode unik yang berbeda.
-  - `rating` : Penilaian dari *user* terhadap film.
+1. `movies_df` : Berisi metadata film ekstensif dari `movies_metadata.csv` berjumlah 45.000 film dari TMDb. Deskripsi fitur `movies_df` (24 kolom awal):
+   - `adult` : `object` - Menunjukkan apakah film tersebut ditujukan untuk penonton dewasa (True/False). Beberapa entri mungkin tidak dalam format boolean yang benar.
+   - `belongs_to_collection`: `object` - Informasi JSON tentang koleksi film (misalnya, bagian dari seri film).
+   - `budget` : `object` - Anggaran produksi film dalam format string. Beberapa entri mungkin non-numerik.
+   - `genres` : `object` - Informasi JSON tentang genre film (misalnya, Comedia, Drama).
+   - `homepage` : `object` - URL situs web resmi film.
+   - `id` : `object` - ID film atau kode unik untuk setiap film berbeda. Awalnya bertipe `object` karena ada beberapa entri non-numerik, perlu dikonversi ke numerik.
+   - `imbd_id` : `object` - ID unik film di IMBDd.
+   - `original_language` : `object` - Kode bahasa asli film (misalnya, en, fr).
+   - `original_title` : `object` - Judul asli film sebelum translasi.
+   - `overview` : `object` - Ringkasan singkat atau sinopsis film.
+   - `popularity` : `object` - Skor popularitas film. Beberapa entri mungkin non-numerik.
+   - `poster_path` : `object` - Path ke gambar poster film.
+   - `production_companies` : `object` - Informasi JSON tentang perusaahn produksi film.
+   - `production _countries` : `object` ` Informasi JSON tenatng negara produksi film.
+   - `release_date`: `object`  - Tanggal rilis film. Beberapa entri mungkin tidak dalam format tanggal yang valid.
+   - `revenue` : `float64` - Pendapatan box office film.
+   - `runtime` : `float64` - Durasi film dalam menit.
+   - `spoken_languages` : `object` - Informmasi JSON tentang bahasa yang digunakan dalam film.
+   - `status` : `object` - Status produksi film (misalnya, *Released*, *Post Production*).
+   - `tagline` : `object` - Slogan atau *tagline* film.
+   - `title` : `object` - Judul film yang ditampilkan.
+   - `video` : `object` - Menunjukkan apakah film memiliki video ttrailer (True/False).
+   - `vote_average` : `float64` - Rata-rata *rating* pengguna.
+   - `vote_count` : `float64` - Jumlah total voting pengguna.
+2. `ratings_df` : Berisi `rating_small.csv` yang merupakan data rating *user* berjumlah 100.000 rating dari 700 *user* dari 9.000 film. Variabel yang digunakan sebagai berikut:
+  - `userID` : `int64` - ID *user* atau kode unik *user*.
+  - `movieID` : `int64` - Kode unik untuk film, dan setiap film memiliki kode unik yang berbeda.
+  - `rating` : `float64` - Penilaian dari *user* terhadap film.
+  - `timestamp` : `int64` - Waktu (dalam format Unix epoch time) ketika rating diberikan. Informasi ini bisa berguna untuk analisis tren atau memabngun model berbasis waktu, namun tidak digunakan langsung dalam model *Collaborative Filtering* saat ini.
 
 ### Tahapan Eksplorasi Data (Exploratory Data Analysis - EDA)
 - `info()` : Untuk menampilkan ringkasan informasi tentang dataset.
