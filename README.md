@@ -100,35 +100,6 @@ Dataset ini sangat cocok untuk membangun sistem rekomendasi karena menyediakan d
 - `dropna()` : Menghapus semua baris yang mempunya nilai NaN di kolom terpilih.
 - `astype(int)` : Mengubah tipe data kolom terpilih menjadi integer agar lebih sesuai.
 
-```
-# Informasi dataset ratings
-print("Info DataFrame Ratings")
-print(ratings_df.info())
-print("5 Baris Pertama DataFrame Ratings")
-print(ratings_df.head())
-print("Statistik Deskriptif DataFrame Ratings")
-print(ratings_df.describe())
-print("Jumlah Nilai Hilang DataFrame Ratings")
-print(ratings_df.isnull().sum())
-```
-
-```
-# Informasi Dataset Movies
-print("Info DataFrame Movies")
-
-movies_df['id'] = pd.to_numeric(movies_df['id'], errors='coerce')
-
-movies_df = movies_df.dropna(subset=['id'])
-
-movies_df['id'] = movies_df['id'].astype(int)
-
-movies_df.info()
-print("5 Baris Pertama DataFrame Movies")
-print(movies_df.head())
-print("Jumlah Nilai Hilang DataFrame Movies")
-print(movies_df.isnull().sum())
-```
-
 ## Data Preprocessing
 Tujuan pra-pemrosesan adalah untuk membersihkan dan menyiapkan data agar sesuai untuk model sistem rekomendasi. Untuk Item-Based Collaborative Filtering, kita perlu membuat matriks pengguna-item (User-Item Matrix) di mana barisnya adalah pengguna, kolomnya adalah item, dan nilai di selnya adalah rating.
 Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dilakukan. Teknik yang digunakan pada notebook dan laporan harus berurutan.
@@ -154,29 +125,6 @@ Pada bagian ini Anda menerapkan dan menyebutkan teknik data preparation yang dil
 4. Menangani Nilai `NaN di Matriks *User-Item*:
    - `user_movie_matrix_filled = user_movie_matrix.fillna(0)`: Nilai `NaN` dalam `user_movie_matrix` diisi dengan 0. Dalam konteks sistem rekomendasi, mengisi `NaN` dengan 0 sering kali berarti bahwa tidak adanya rating dianggap sebagai tidak adanya interaksi atau bahwa pengguna tidak memiliki preferensi (netral) terhadap film tersebut. Ini penting karena algoritma kesamaan memerlukan input numerik.
    - `print("\n--- User-Movie Matrix Setelah Mengisi NaN dengan 0 (Partial View) ---")` dan `print(user_movie_matrix_filled.head())`: Menampilkan kembali lima baris pertama setelah pengisian NaN untuk memverifikasi perubahannya.
-```
-movies_df['year'] = pd.to_datetime(movies_df['release_date'], errors='coerce').dt.year.fillna('').astype(str)
-
-movies_df['full_title'] = movies_df['title'].str.strip() + ' (' + movies_df['year'].str.strip() + ')'
-
-movies_df['full_title'] = movies_df['full_title'].replace(' \(\)', '', regex=True)
-movies_df['full_title'] = movies_df['full_title'].fillna(movies_df['title'])
-
-movies_df_filtered = movies_df[['id', 'full_title']].copy()
-movies_df_filtered.rename(columns={'id': 'movieId', 'full_title': 'title'}, inplace=True)
-
-data = pd.merge(ratings_df, movies_df_filtered, on='movieId', how='inner')
-
-user_movie_matrix = data.pivot_table(index='userId', columns='title', values='rating')
-
-print("\n--- User-Movie Matrix (Partial View) ---")
-print(user_movie_matrix.head())
-print("\nUkuran User-Movie Matrix:", user_movie_matrix.shape)
-
-user_movie_matrix_filled = user_movie_matrix.fillna(0)
-print("\n--- User-Movie Matrix Setelah Mengisi NaN dengan 0 (Partial View) ---")
-print(user_movie_matrix_filled.head())
-```
 
 ## Modeling
 Untuk Item-Based Collaborative Filtering, kita perlu menghitung kesamaan antar film. Kesamaan ini dihitung berdasarkan pola rating yang diberikan oleh pengguna.
@@ -193,41 +141,9 @@ Matriks Kesamaan: Kita akan menghitung Cosine Similarity antar film. Cosine Simi
 - Saring film yang sudah ditonton oleh pengguna (untuk implementasi lebih lanjut) atau film itu sendiri.
 - Ambil N film teratas sebagai rekomendasi.
 
-```
-item_user_matrix = user_movie_matrix_filled.T
-
-print("\n--- Item-User Matrix (Partial View) ---")
-print(item_user_matrix.head())
-print("\nUkuran Item-User Matrix:", item_user_matrix.shape)
-
-item_similarity_matrix = cosine_similarity(item_user_matrix)
-
-item_similarity_df = pd.DataFrame(item_similarity_matrix, index=item_user_matrix.index, columns=item_user_matrix.index)
-
-print("\n--- Item Similarity Matrix (Partial View) ---")
-print(item_similarity_df.head())
-print("\nUkuran Item Similarity Matrix:", item_similarity_df.shape)
-```
-
 ### Fungsi Rekomendasi 
 Menggunakan fungsi 'get_item_based_recommendations' berfunsgi menjadi sistem rekomendasi untuk mencari dan memberikan daftar film lainnya yang mirip dengan film yang dimasukkan. 
 
-```
-def get_item_based_recommendations(movie_title, item_similarity_df, num_recommendations=10):
-
-    if movie_title not in item_similarity_df.columns:
-        print(f"Film '{movie_title}' tidak ditemukan dalam dataset kesamaan.")
-        print("Mohon periksa ejaan atau format judul yang benar.")
-        return pd.Series()
-
-    similar_movies = item_similarity_df[movie_title].sort_values(ascending=False)
-
-    similar_movies = similar_movies.drop(movie_title, errors='ignore')
-
-    recommendations = similar_movies.head(num_recommendations)
-
-    return recommendations
-```
 ## Contoh Output Rekomendasi
 Setelah model kesamaan antar item (`item_similarity_df`) dibuat dan fungsi rekomendasi (`get_item_based_recommendations`) didefinisikan, selanjutnya dapat menguji sistem rekomendasi dengan memberikan beberapa juudl film sebagai *input*. Berikut adalah contoh hasil rekomendasi untuk beberapa film:
 ```
@@ -314,95 +230,10 @@ Interpretasi: Nilai ini menunjukkan bahwa rata-rata sistem berhasil menangkap se
 Average F1-score@10: `[INSERT_NILAI_F1_SCORE_DISINI]`
 Interpretasi: Nilai ini mencerminkan keseimbangan antara presisi dan cakupan rekomendasi, dengan nilai `[INSERT_NILAI_F1_SCORE_DISINI]` menunjukkan kinerja model secara keseluruhan dalam mengidentifikasi item relevan.
 
-```
-unique_users = data['userId'].unique()
-
-all_precision = []
-all_recall = []
-K = 10 
-
-for user_id in unique_users:
-    user_data = data[data['userId'] == user_id]
-
-    if len(user_data) < 2: 
-        continue
-
-    train_user_ratings, test_user_ratings = train_test_split(user_data, test_size=0.3, random_state=42)
-
-    relevant_items_in_test = set(test_user_ratings[test_user_ratings['rating'] >= 4.0]['title'].unique())
-
-    if not relevant_items_in_test: 
-        continue
-
-    items_rated_by_user_in_train = train_user_ratings['title'].unique()
-
-    user_recommendations = pd.Series(dtype=float)
-    for movie_title in items_rated_by_user_in_train:
-        recs = get_item_based_recommendations(movie_title, item_similarity_df, num_recommendations=K)
-        if not recs.empty:
-            user_recommendations = pd.concat([user_recommendations, recs])
-
-    user_recommendations = user_recommendations.drop(items_rated_by_user_in_train, errors='ignore')
-    user_recommendations = user_recommendations.sort_values(ascending=False).head(K) # Ambil top K
-
-    recommended_items = set(user_recommendations.index.tolist())
-
-    true_positives = len(recommended_items.intersection(relevant_items_in_test))
-
-    false_positives = len(recommended_items.difference(relevant_items_in_test))
-
-    false_negatives = len(relevant_items_in_test.difference(recommended_items))
-
-    if (true_positives + false_positives) > 0:
-        precision_at_k = true_positives / (true_positives + false_positives)
-        all_precision.append(precision_at_k)
-
-    if (true_positives + false_negatives) > 0:
-        recall_at_k = true_positives / (true_positives + false_negatives)
-        all_recall.append(recall_at_k)
-
-average_precision_at_k = np.mean(all_precision) if all_precision else 0
-average_recall_at_k = np.mean(all_recall) if all_recall else 0
-
-print(f"\n--- Hasil Evaluasi Metrik untuk K={K} ---")
-print(f"Average Precision@{K}: {average_precision_at_k:.4f}")
-print(f"Average Recall@{K}: {average_recall_at_k:.4f}")
-
-if (average_precision_at_k + average_recall_at_k) > 0:
-    average_f1_score_at_k = 2 * (average_precision_at_k * average_recall_at_k) / (average_precision_at_k + average_recall_at_k)
-    print(f"Average F1-score@{K}: {average_f1_score_at_k:.4f}")
-else:
-    average_f1_score_at_k = 0
-    print(f"Average F1-score@{K}: Tidak dapat dihitung (Precision + Recall = 0)")
-```
-
 ### Pengujian Fungsional (Verifikasi)
 Selain metrik kuantitatif, pengujian fungsional juga dilakukan untuk memverifikasi bahwa sistem dapat mencari judul film dengan benar dan memberikan rekomendasi. Ini mencakup:
 
 - Membuat daftar semua judul film yang dikenal oleh sistem.
 - Mencari film spesifik (misalnya, 'Pulp Fiction (1994)', 'Toy Story (1995)', 'The Shawshank Redemption (1994)') untuk memastikan keberadaan dan format judul yang benar.
 - Menampilkan contoh rekomendasi untuk judul yang ada dan feedback untuk judul yang tidak ditemukan, seperti yang telah ditunjukkan pada bagian Modeling. Ini memastikan bahwa fungsi `get_item_based_recommendations` bekerja sesuai harapan dan memberikan output yang informatif kepada pengguna.
-
-```
-print("Testing Rekomendasi")
-
-print("Contoh Judul Film yang Ada di Matriks Kesamaan (sorted)")
-
-sorted_titles = sorted(item_similarity_df.columns.tolist())
-
-print(sorted_titles[0:20])
-
-print(f"Judul yang mengandung 'Pulp' (case-insensitive)")
-pulp_titles = [title for title in sorted_titles if 'pulp' in title.lower()]
-print(pulp_titles)
-
-print(f"Judul yang mengandung 'Toy Story' (case-insensitive)")
-toy_story_titles = [title for title in sorted_titles if 'toy story' in title.lower()]
-print(toy_story_titles)
-
-print(f"Judul yang mengandung 'Shawshank' (case-insensitive)")
-shawshank_titles = [title for title in sorted_titles if 'shawshank' in title.lower()]
-print(shawshank_titles)
-```
-
 
